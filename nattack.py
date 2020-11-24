@@ -6,22 +6,22 @@ from scapy.layers.dot11 import RadioTap, Dot11, Dot11Deauth, Dot11Beacon
 from scapy.sendrecv import sniff
 
 
-bbssid = []
+bssid = []
 
 
 def getAllWifiDevices(packet):
     if packet.haslayer(Dot11):
-        if packet.addr2 and packet.addr2 not in bbssid:
+        if packet.addr2 and packet.addr2 not in bssid:
             try:
                 stats = packet[Dot11Beacon].network_stats()
-                bbssid.append(packet.addr2)
-                print(len(bbssid), packet.addr2, packet.dBm_AntSignal, stats.get("channel"),
+                bssid.append(packet.addr2)
+                print(len(bssid), packet.addr2, packet.dBm_AntSignal, stats.get("channel"),
                       *stats.get("crypto"), packet.info.decode("utf-8"))
             except:
                 pass
 
 
-def getMacBbsid(interface):
+def getMacBssid(interface):
     subprocess.run("iwconfig %s" % interface, shell=True, check=True)
 
 
@@ -53,8 +53,8 @@ def ex():
 
 
 def checkParameters(args):
-    if args.getMacBbsid:
-        if args.getAllBbsid:
+    if args.getMacBssid:
+        if args.getAllBssid:
             ex()
         elif args.monitorMode:
             ex()
@@ -62,10 +62,10 @@ def checkParameters(args):
             ex()
         else:
             try:
-                print(getMacBbsid())
+                print(getMacBssid())
             except:
                 print("You need to be connected to a network!")
-    elif args.getAllBbsid:
+    elif args.getAllBssid:
         if args.monitorMode:
             ex()
         elif args.managedMode:
@@ -86,7 +86,7 @@ def checkParameters(args):
             macVictim = args.victim
 
         if args.bssid is None:
-            print("You have to set de the router bbsid")
+            print("You have to set de the router bssid")
         else:
             if args.dos:
                 print("Press enter to kill the program")
@@ -113,9 +113,9 @@ if __name__ == "__main__":
     parser.add_argument("-b", "--bssid", required=False, help="Gateway MAC address")
     parser.add_argument("-d", "--dos", required=False, action="store_true", help="This option put de deauthentication function in an endless loop")
     #####################################################################################################
-    parser.add_argument("-g", "--getMacBbsid", required=False, action='store_true',
+    parser.add_argument("-g", "--getMacBssid", required=False, action='store_true',
                         help="This options get the MAC of the router you are connected to and more information about it")
-    parser.add_argument("-a", "--getAllBbsid", required=False, action='store_true',
+    parser.add_argument("-a", "--getAllBssid", required=False, action='store_true',
                         help="This options get all mac of the nearby routers")
     parser.add_argument("-mt", "--monitorMode", required=False, action='store_true',
                         help="This option put your interface in monitor mode")
