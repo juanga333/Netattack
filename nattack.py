@@ -6,12 +6,11 @@ from scapy.layers.dot11 import RadioTap, Dot11, Dot11Deauth, Dot11Beacon
 from scapy.sendrecv import sniff
 
 
-channel = [1, 6, 11]
-
-
 def channelHopping(interface):
-    r = random.randrange(3)
-    os.system('iw dev %s set channel %d' % (interface, channel[r]))
+    r = random.randrange(1,14)
+    if r == 14:
+        print(r)
+    os.system('iw dev %s set channel %d' % (interface, r))
 
 
 def print_row(len, bbsid, pwr, channel, encrypt, ssid):
@@ -26,15 +25,7 @@ def getAllWifiDevices(packet):
         if packet.addr2 and packet.addr2 not in bssid:
             try:
                 stats = packet[Dot11Beacon].network_stats()
-                if len(stats.get("crypto")) > 1:
-                    crypto = ""
-                    j = 0
-                    for i in range(len(stats.get("crypto"))):
-                        if i > 1:
-                            crypto += "-"
-                        crypto += stats.get("crypto")[i]
-                else:
-                    crypto = stats.get("crypto")[0]
+                crypto = stats.get("crypto")
                 print_row(len(bssid), packet.addr2, packet.dBm_AntSignal, stats.get("channel"), crypto, packet.info.decode("utf-8"))
                 bssid.append(packet.addr2)
             except:
