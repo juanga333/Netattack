@@ -7,7 +7,7 @@ from scapy.sendrecv import sniff
 
 
 def print_row(len, bbsid, pwr, channel, encrypt, ssid):
-    print("%-1s %-15s %-5s %-5s %-15s %-15s" % (len, bbsid, pwr, channel, encrypt, ssid))
+    print("%-1s %-25s %-5s %-5s %-15s %-15s" % (len, bbsid, pwr, channel, encrypt, ssid))
 
 
 bssid = []
@@ -76,7 +76,7 @@ def checkParameters(args):
         elif args.managedMode:
             ex()
         else:
-            print_row('', 'BSSID', 'PWR', 'CHANNEL', "Encryption", "SSID")
+            print_row('', 'BSSID', 'PWR', 'CH', "CRYPT", "SSID")
             sniff(iface=args.interface, prn=getAllWifiDevices)
     elif args.monitorMode:
         if args.managedMode:
