@@ -34,7 +34,7 @@ def getAllWifiDevices(packet):
                             crypto += "-"
                         crypto += stats.get("crypto")[i]
                 else:
-                    crypto = stats.get("crypto")
+                    crypto = stats.get("crypto")[0]
                 print_row(len(bssid), packet.addr2, packet.dBm_AntSignal, stats.get("channel"), crypto, packet.info.decode("utf-8"))
                 bssid.append(packet.addr2)
             except:
@@ -91,6 +91,7 @@ def checkParameters(args):
         elif args.managedMode:
             ex()
         else:
+            print("Press enter to kill the program")
             print_row('', 'BSSID', 'PWR', 'CH', "CRYPT", "SSID")
             newpid = os.fork()
             if newpid == 0:
