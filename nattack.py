@@ -6,6 +6,10 @@ from scapy.layers.dot11 import RadioTap, Dot11, Dot11Deauth, Dot11Beacon
 from scapy.sendrecv import sniff
 
 
+def print_row(len, bbsid, pwr, channel, encrypt, ssid):
+    print("%-1s %-15s %-5s %-5s %-15s %-15s" % (len, bbsid, pwr, channel, encrypt, ssid))
+
+
 bssid = []
 
 
@@ -15,8 +19,9 @@ def getAllWifiDevices(packet):
             try:
                 stats = packet[Dot11Beacon].network_stats()
                 bssid.append(packet.addr2)
-                print(len(bssid), packet.addr2, packet.dBm_AntSignal, stats.get("channel"),
-                      *stats.get("crypto"), packet.info.decode("utf-8"))
+                print_row(len(bssid), packet.addr2, packet.dBm_AntSignal, stats.get("channel"), *stats.get("crypto"), packet.info.decode("utf-8"))
+                """print(len(bssid), packet.addr2, packet.dBm_AntSignal, stats.get("channel"),
+                      *stats.get("crypto"), packet.info.decode("utf-8"))"""
             except:
                 pass
 
@@ -71,6 +76,7 @@ def checkParameters(args):
         elif args.managedMode:
             ex()
         else:
+            print_row('', 'BSSID', 'PWR', 'CHANNEL', "Encryption", "SSID")
             sniff(iface=args.interface, prn=getAllWifiDevices)
     elif args.monitorMode:
         if args.managedMode:
