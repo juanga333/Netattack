@@ -1,9 +1,17 @@
 import signal
 import argparse
 import subprocess
-from scapy.all import sendp, os
+from scapy.all import sendp, os, random
 from scapy.layers.dot11 import RadioTap, Dot11, Dot11Deauth, Dot11Beacon
 from scapy.sendrecv import sniff
+
+
+channel = [1, 6, 11]
+
+
+def channelHopping(interface):
+    r = random.randrange(3)
+    os.system('iw dev %s set channel %d' % (interface, channel[r]))
 
 
 def print_row(len, bbsid, pwr, channel, encrypt, ssid):
@@ -77,7 +85,17 @@ def checkParameters(args):
             ex()
         else:
             print_row('', 'BSSID', 'PWR', 'CH', "CRYPT", "SSID")
-            sniff(iface=args.interface, prn=getAllWifiDevices)
+            newpid = os.fork()
+            if newpid == 0:
+                sniff(iface=args.interface, prn=getAllWifiDevices)
+            else:
+                newpid2 = os.fork()
+                if newpid2 == 0:
+                    while True:
+                        channelHopping(args.interface)
+                else:
+                    input('')
+                    os.kill(newpid, signal.SIGKILL)
     elif args.monitorMode:
         if args.managedMode:
             ex()
