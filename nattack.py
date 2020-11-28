@@ -15,7 +15,7 @@ def channelHopping(interface):
 
 
 def print_row(len, bbsid, pwr, channel, encrypt, ssid):
-    print("%-1s %-25s %-5s %-5s %-15s %-15s" % (len, bbsid, pwr, channel, encrypt, ssid))
+    print("%-3s %-25s %-5s %-5s %-35s %-15s" % (len, bbsid, pwr, channel, encrypt, ssid))
 
 
 bssid = []
@@ -26,10 +26,8 @@ def getAllWifiDevices(packet):
         if packet.addr2 and packet.addr2 not in bssid:
             try:
                 stats = packet[Dot11Beacon].network_stats()
-                bssid.append(packet.addr2)
                 print_row(len(bssid), packet.addr2, packet.dBm_AntSignal, stats.get("channel"), *stats.get("crypto"), packet.info.decode("utf-8"))
-                """print(len(bssid), packet.addr2, packet.dBm_AntSignal, stats.get("channel"),
-                      *stats.get("crypto"), packet.info.decode("utf-8"))"""
+                bssid.append(packet.addr2)
             except:
                 pass
 
@@ -75,7 +73,7 @@ def checkParameters(args):
             ex()
         else:
             try:
-                print(getMacBssid())
+                print(getMacBssid(args.interface))
             except:
                 print("You need to be connected to a network!")
     elif args.getAllBssid:
@@ -96,6 +94,7 @@ def checkParameters(args):
                 else:
                     input('')
                     os.kill(newpid, signal.SIGKILL)
+                    os.kill(newpid2, signal.SIGKILL)
     elif args.monitorMode:
         if args.managedMode:
             ex()
