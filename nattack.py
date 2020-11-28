@@ -15,7 +15,7 @@ def channelHopping(interface):
 
 
 def print_row(len, bbsid, pwr, channel, encrypt, ssid):
-    print("%-3s %-25s %-5s %-5s %-35s %-15s" % (len, bbsid, pwr, channel, encrypt, ssid))
+    print("%-3s %-25s %-5s %-5s %-25s %-15s" % (len, bbsid, pwr, channel, encrypt, ssid))
 
 
 bssid = []
@@ -26,7 +26,16 @@ def getAllWifiDevices(packet):
         if packet.addr2 and packet.addr2 not in bssid:
             try:
                 stats = packet[Dot11Beacon].network_stats()
-                print_row(len(bssid), packet.addr2, packet.dBm_AntSignal, stats.get("channel"), *stats.get("crypto"), packet.info.decode("utf-8"))
+                if len(stats.get("crypto")) > 1:
+                    crypto = ""
+                    j = 0
+                    for i in range(len(stats.get("crypto"))):
+                        if i > 1:
+                            crypto += "-"
+                        crypto += stats.get("crypto")[i]
+                else:
+                    crypto = stats.get("crypto")
+                print_row(len(bssid), packet.addr2, packet.dBm_AntSignal, stats.get("channel"), crypto, packet.info.decode("utf-8"))
                 bssid.append(packet.addr2)
             except:
                 pass
