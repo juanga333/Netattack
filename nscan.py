@@ -57,7 +57,7 @@ if __name__ == "__main__":
         if args.getMacBssid:
             print("You need to specify only one option: -g or -a")
         else:
-            scan = Scan()
+            scan = Scan(args.interface)
             print("Press enter to kill the program")
             scan.print_row('', 'BSSID', 'PWR', 'CH', "CRYPT", "SSID")
             newpid = os.fork()
