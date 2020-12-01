@@ -21,22 +21,22 @@ pip3 install -r requirements.txt
 ### Usage
 _To put your network interface in monitor mode_
 ```
-sudo python3 nattack.py -i <interface> -mt
+sudo python3 mon.py -i <interface> -mt
 ```
 
 _To put your network interface in managed mode_
 ```
-sudo python3 nattack.py -i <interface> -mg
+sudo python3 mon.py -i <interface> -mg
 ```
 
 _Also you can get the MAC address and more information about the router you are connected to_
 ```
-sudo python3 nattack.py -i <interface> -g
+sudo python3 nscan.py -i <interface> -g
 
 ```
 _To see all nearby wifi_
 ```
-sudo python3 nattack.py -i <interface> -a
+sudo python3 nscan.py -i <interface> -a
 ```
 
 _This is the basic usage example to deauthenticate a wifi client from a router_
