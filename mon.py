@@ -26,13 +26,13 @@ if __name__ == "__main__":
                         help="This option put your interface in managed mode")
     args = parser.parse_args()
 
-    if args.monitorMode is not None:
-        if args.managedMode is not None:
+    if args.monitorMode:
+        if args.managedMode:
             print("You need to specify only one option: -mt or -mg")
         else:
             setMonitorMode(args.interface)
     else:
-        if args.managedMode is None:
+        if not args.managedMode:
             print("You need to specify one of these options: -mt or -mg")
         else:
             setManagedMode(args.interface)

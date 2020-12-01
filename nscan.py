@@ -53,8 +53,8 @@ if __name__ == "__main__":
                         help="This options get all mac of the nearby routers")
     args = parser.parse_args()
 
-    if args.getAllBssid is not None:
-        if args.getMacBssid is not None:
+    if args.getAllBssid:
+        if args.getMacBssid:
             print("You need to specify only one option: -g or -a")
         else:
             scan = Scan()
@@ -73,7 +73,7 @@ if __name__ == "__main__":
                     os.kill(newpid, signal.SIGKILL)
                     os.kill(newpid2, signal.SIGKILL)
     else:
-        if args.getMacBssid is None:
+        if not args.getMacBssid:
             print("You need to specify one of these options: -g or -a")
         else:
             getMacBssid(args.interface)
