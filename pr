@@ -1,7 +1,0 @@
-def print_row(len, bbsid, pwr, channel, encrypt, ssid):
-    print("%-3s %-25s %-5s %-5s %-25s %-15s" % (len, bbsid, pwr, channel, encrypt, ssid))
-
-mylist = ['x', 3, 'b']
-print("Press enter to kill the program")
-print_row('', 'BSSID', 'PWR', 'CH', "CRYPT", "SSID")
-print_row('1','MAC', '23','1',mylist, "Tesla")
