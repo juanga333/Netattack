@@ -2,24 +2,29 @@ import argparse
 import signal
 import subprocess
 from scapy.all import os, random, sniff
-
-from scapy.layers.dot11 import Dot11Beacon, Dot11
+from scapy.layers.dot11 import Dot11Beacon, Dot11, Dot11ProbeReq
 
 
 class Scan:
     __bssid: list
     __interface: str
+    __clientprobes: list
 
     def __init__(self, interface):
         self.__bssid = []
+        self.__clientprobes = []
         self.__interface = interface
 
     @staticmethod
     def print_row(len, bbsid, pwr, channel, encrypt, ssid):
         print("%-3s %-25s %-5s %-5s %-25s %-15s" % (len, bbsid, pwr, channel, encrypt, ssid))
 
+    @staticmethod
+    def print_row_client(len, macclient, ssid, pwr):
+        print("%-3s %-25s %-25s %-5s" % (len, macclient, ssid, pwr))
+
     def channelHopping(self):
-        r = random.randrange(1,14)
+        r = random.randrange(1, 14)
         if r == 14:
             print(r)
         os.system('iw dev %s set channel %d' % (self.__interface, r))
@@ -36,6 +41,15 @@ class Scan:
                 except:
                     pass
 
+    def getClientsProbes(self, packet):
+        if packet.haslayer(Dot11ProbeReq):
+            if len(packet.info):
+                testcase = str(packet.addr2), str(packet.info)
+                if testcase not in self.__clientprobes:
+                    self.__clientprobes.append(testcase)
+                    self.print_row_client(len(self.__clientprobes), str(packet.addr2),
+                                          str(packet.info.decode("utf-8")), packet.dBm_AntSignal)
+
 
 def getMacBssid(interface):
     subprocess.run("iwconfig %s" % interface, shell=True, check=True)
@@ -51,13 +65,16 @@ if __name__ == "__main__":
                         help="This options get the MAC of the router you are connected to and more information about it")
     parser.add_argument("-a", "--getAllBssid", required=False, action='store_true',
                         help="This options get all mac of the nearby routers")
+    parser.add_argument("-p", "--getClientProbes", required=False, action='store_true',
+                        help="This options get client probes")
+
     args = parser.parse_args()
 
+    scan = Scan(args.interface)
     if args.getAllBssid:
         if args.getMacBssid:
             print("You need to specify only one option: -g or -a")
         else:
-            scan = Scan(args.interface)
             print("Press enter to kill the program")
             scan.print_row('', 'BSSID', 'PWR', 'CH', "CRYPT", "SSID")
             newpid = os.fork()
@@ -72,6 +89,9 @@ if __name__ == "__main__":
                     input('')
                     os.kill(newpid, signal.SIGKILL)
                     os.kill(newpid2, signal.SIGKILL)
+    elif args.getClientProbes:
+        scan.print_row_client("", "MAC CLIENT", "SSID", "PWR")
+        sniff(prn=scan.getClientsProbes)
     else:
         if not args.getMacBssid:
             print("You need to specify one of these options: -g or -a")
