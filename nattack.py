@@ -1,3 +1,4 @@
+#!/bin/python3
 import signal
 import argparse
 from scapy.all import sendp, os
