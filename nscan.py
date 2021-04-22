@@ -52,18 +52,12 @@ class Scan:
                                           str(packet.info.decode("utf-8")), packet.dBm_AntSignal)
 
 
-def getMacBssid(interface):
-    subprocess.run("iwconfig %s" % interface, shell=True, check=True)
-
-
 if __name__ == "__main__":
     macVictim = ""
     parser = argparse.ArgumentParser(
         description="This script deauthenticates a device from a router. It can be used to with all devices (ff:ff:ff:ff:ff:ff).\n"
                     "Prerequisites: You and your victim need to have wifi. ")
     parser.add_argument("-i", "--interface", required=True, help="Network interface")
-    parser.add_argument("-g", "--getMacBssid", required=False, action='store_true',
-                        help="This options get the MAC of the router you are connected to and more information about it")
     parser.add_argument("-a", "--getAllBssid", required=False, action='store_true',
                         help="This options get all mac of the nearby routers")
     parser.add_argument("-p", "--getClientProbes", required=False, action='store_true',
@@ -94,7 +88,4 @@ if __name__ == "__main__":
         scan.print_row_client("", "MAC CLIENT", "SSID", "PWR")
         sniff(prn=scan.getClientsProbes)
     else:
-        if not args.getMacBssid:
-            print("You need to specify one of these options: -g or -a")
-        else:
-            getMacBssid(args.interface)
+        print("You need to specify one option (-a or -p)")
