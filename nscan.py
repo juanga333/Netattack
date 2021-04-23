@@ -67,23 +67,20 @@ if __name__ == "__main__":
 
     scan = Scan(args.interface)
     if args.getAllBssid:
-        if args.getMacBssid:
-            print("You need to specify only one option: -g or -a")
+        print("Press enter to kill the program")
+        scan.print_row('', 'BSSID', 'PWR', 'CH', "CRYPT", "SSID")
+        newpid = os.fork()
+        if newpid == 0:
+            sniff(iface=args.interface, prn=scan.getAllWifiDevices)
         else:
-            print("Press enter to kill the program")
-            scan.print_row('', 'BSSID', 'PWR', 'CH', "CRYPT", "SSID")
-            newpid = os.fork()
-            if newpid == 0:
-                sniff(iface=args.interface, prn=scan.getAllWifiDevices)
+            newpid2 = os.fork()
+            if newpid2 == 0:
+                while True:
+                    scan.channelHopping()
             else:
-                newpid2 = os.fork()
-                if newpid2 == 0:
-                    while True:
-                        scan.channelHopping()
-                else:
-                    input('')
-                    os.kill(newpid, signal.SIGKILL)
-                    os.kill(newpid2, signal.SIGKILL)
+                input('')
+                os.kill(newpid, signal.SIGKILL)
+                os.kill(newpid2, signal.SIGKILL)
     elif args.getClientProbes:
         scan.print_row_client("", "MAC CLIENT", "SSID", "PWR")
         sniff(prn=scan.getClientsProbes)
