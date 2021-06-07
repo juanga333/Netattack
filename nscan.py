@@ -83,6 +83,17 @@ if __name__ == "__main__":
                 os.kill(newpid2, signal.SIGKILL)
     elif args.getClientProbes:
         scan.print_row_client("", "MAC CLIENT", "SSID", "PWR")
-        sniff(prn=scan.getClientsProbes)
+        newpid = os.fork()
+        if newpid == 0:
+            sniff(prn=scan.getClientsProbes)
+        else:
+            newpid2 = os.fork()
+            if newpid2 == 0:
+                while True:
+                    scan.channelHopping()
+            else:
+                input('')
+                os.kill(newpid, signal.SIGKILL)
+                os.kill(newpid2, signal.SIGKILL)
     else:
         print("You need to specify one option (-a or -p)")
